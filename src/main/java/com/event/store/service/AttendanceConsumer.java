@@ -1,6 +1,7 @@
 package com.event.store.service;
 
 import com.event.store.entity.EmployeeEntity;
+import com.event.store.model.KafkaPayload;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -18,18 +19,45 @@ public class AttendanceConsumer {
     private final EventStoreService eventStoreService;
 
     @KafkaListener(topics = topic,
-            groupId = "attendanceGroup")
+            groupId = "attendanceGroup1")
     public void attendanceConsumer(String attendanceData) {
         try {
-            EmployeeEntity entity = convertStringToEmployee(attendanceData);
-            eventStoreService.saveAttendance(entity);
+            KafkaPayload kafkaPayload = convertStringToEmployee(attendanceData);
+            eventStoreService.saveAttendance(mapKafkaPayloadToEmployeeEntity(kafkaPayload));
         } catch (JsonProcessingException ex) {
+            log.error("exception {}:",ex.getMessage());
             log.error("error to read attendance data: {} from topic {}", topic);
         }
     }
 
-    private EmployeeEntity convertStringToEmployee(String attendanceData) throws JsonProcessingException {
-        return objectMapper.readValue(attendanceData, EmployeeEntity.class);
+    private KafkaPayload convertStringToEmployee(String attendanceData) throws JsonProcessingException {
+        return objectMapper.readValue(attendanceData, KafkaPayload.class);
     }
+
+    private EmployeeEntity mapKafkaPayloadToEmployeeEntity(KafkaPayload kafkaPayload){
+        EmployeeEntity employeeEntity =EmployeeEntity.builder()
+                .presentHours(kafkaPayload.getAttendance())
+                .empId(kafkaPayload.getEmpId())
+                .name(kafkaPayload.getName())
+                .attendance(calculateAttendance(kafkaPayload.getAttendance()))
+                .build();
+
+        return employeeEntity;
+
+    }
+
+    private String calculateAttendance(double hours){
+        if(hours>0){
+            if(hours <= 4){
+                return "Absent";
+            } else if (hours>4 && hours<8) {
+                return "Half day";
+            }else return "Present";
+        }else {
+            return "Absent";
+        }
+    }
+
+
 
 }

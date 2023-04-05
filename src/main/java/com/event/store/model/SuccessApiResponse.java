@@ -6,9 +6,9 @@ import lombok.Getter;
 public class SuccessApiResponse extends ApiResponse {
     private int empId;
     private String empName;
-    private int attendance;
+    private double attendance;
 
-    public SuccessApiResponse(int empId, String empName, int attendance, String message) {
+    public SuccessApiResponse(int empId, String empName, double attendance, String message) {
         super(message);
         this.empId = empId;
         this.empName = empName;
