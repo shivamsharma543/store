@@ -24,7 +24,7 @@ public class GetAttendance {
     @GetMapping("/attendance")
     public ResponseEntity<ApiResponse> getAttendanceForEmp(@RequestParam int empId) {
         EmployeeEntity employeeEntity = eventStoreService.getEmployeeAttendance(empId);
-        return employeeEntity != null ? ResponseEntity.ok(new SuccessApiResponse(employeeEntity.getEmpId(), employeeEntity.getName(), employeeEntity.getAttendance(), "attendance fetched successfully"))
+        return employeeEntity != null ? ResponseEntity.ok(new SuccessApiResponse(employeeEntity.getEmpId(), employeeEntity.getName(), employeeEntity.getPresentHours(), "attendance fetched successfully"))
                 : new ResponseEntity<>(new ApiResponse("no user exist for empId" + empId), HttpStatus.OK);
 
     }
