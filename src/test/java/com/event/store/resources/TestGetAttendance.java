@@ -2,6 +2,7 @@ package com.event.store.resources;
 
 import com.event.store.entity.EmployeeEntity;
 import com.event.store.service.EventStoreService;
+import com.event.store.service.TestEventStoreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

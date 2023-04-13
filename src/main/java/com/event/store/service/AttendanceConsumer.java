@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import static com.event.store.model.AttendanceStatus.*;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -35,7 +37,7 @@ public class AttendanceConsumer {
     }
 
     private EmployeeEntity mapKafkaPayloadToEmployeeEntity(KafkaPayload kafkaPayload){
-        EmployeeEntity employeeEntity =EmployeeEntity.builder()
+        EmployeeEntity employeeEntity = EmployeeEntity.builder()
                 .presentHours(kafkaPayload.getAttendance())
                 .empId(kafkaPayload.getEmpId())
                 .name(kafkaPayload.getName())
@@ -43,21 +45,17 @@ public class AttendanceConsumer {
                 .build();
 
         return employeeEntity;
-
     }
 
     private String calculateAttendance(double hours){
         if(hours>0){
             if(hours <= 4){
-                return "Absent";
+                return HALF_DAY.name();
             } else if (hours>4 && hours<8) {
-                return "Half day";
-            }else return "Present";
+                return HALF_DAY.name();
+            }else return PRESENT.name();
         }else {
-            return "Absent";
+            return ABSENT.name();
         }
     }
-
-
-
 }

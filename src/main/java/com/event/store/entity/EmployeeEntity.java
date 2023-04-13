@@ -19,7 +19,5 @@ public class EmployeeEntity {
     private int empId;
     private String name;
     private double presentHours;
-
     private String attendance;
-
 }
